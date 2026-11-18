@@ -1,0 +1,20 @@
+# Сборка Qt Creator
+build-*/
+.qtcreator/
+build*/
+*.user
+*.user.*
+*.autosave
+CMakeLists.txt.user*
+*.pro.user
+
+# Исполняемые файлы и объектники
+*.exe
+*.o
+*.obj
+
+# Служебное
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
