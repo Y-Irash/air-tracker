@@ -15,9 +15,20 @@ add_library(core STATIC
     core/point.h
 )
 
+# include-каталог ядра «наружу»: любой, кто линкует core, получает -I.../core
+# и может писать #include "point.h"
 target_include_directories(core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core)
 
 # --- консольная проверка ядра ---
-add_executable(console console/main.cpp
-    console/console_utf8.h)
+add_executable(console
+    console/main.cpp
+    console/console_utf8.h
+    console/point_print.cpp
+    console/point_print.h
+)
+
+# чтобы из файлов консоли работал #include "core/point.h"
+# (корень проекта в списке include-каталогов: путь выглядит как от корня)
+target_include_directories(console PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
 target_link_libraries(console PRIVATE core)

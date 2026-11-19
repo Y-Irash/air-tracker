@@ -1,8 +1,6 @@
 #include "point.h"
 #include <cmath>
 
-constexpr double kPi {3.14159265358979323846};
-
 double distance(const Point2D &a, const Point2D &b) {
     const double dx {b.x - a.x};
     const double dy {b.y - a.y};
@@ -12,12 +10,34 @@ double distance(const Point2D &a, const Point2D &b) {
 double bearing(const Point2D &a, const Point2D &b) {
     const double dx {b.x - a.x};
     const double dy {b.y - a.y};
-    double azimuth {std::atan2(dx, dy)};
-    azimuth = azimuth * 180 / kPi;
+    return normalizeHeading(radiansToDegrees(std::atan2(dx, dy)));
+}
 
-    if (azimuth < 0) {
-        azimuth += 360;
+double degreesToRadians(double degrees) {
+    return degrees * kPi / 180;
+}
+
+double radiansToDegrees(double radians) {
+    return radians * 180 / kPi;
+}
+
+double normalizeHeading(double headingDeg) {
+    headingDeg = std::fmod(headingDeg, 360);
+
+    if (headingDeg < 0) {
+        headingDeg += 360;
+    } else if (headingDeg >= 360) {
+        headingDeg -= 360;
     }
 
-    return azimuth;
+    return headingDeg;
 }
+
+Point2D move(const Point2D &from, double speedKmh, double headingDeg, double dtHours) {
+    const double s = speedKmh * dtHours;
+    const double headingNorm = normalizeHeading(headingDeg);
+    const double headingRad = degreesToRadians(headingNorm);
+    const Point2D to {from.x + s * std::sin(headingRad), from.y + s * std::cos(headingRad)};
+    return to;
+}
+
