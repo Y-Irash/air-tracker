@@ -5,6 +5,8 @@
 
 namespace {
 
+const char *const kHeader = "id,type,x,y,altitude,speed,heading";
+
 std::vector<std::string> splitFields(const std::string &line)
 {
     std::vector<std::string> fields;
@@ -29,7 +31,14 @@ std::vector<std::string> splitFields(const std::string &line)
 int toInt(const std::string &field, std::size_t lineNumber)
 {
     try {
-        return std::stoi(field);
+        std::size_t used = 0;
+        const int value = std::stoi(field, &used);
+        if (used != field.size()) {
+            fail(lineNumber, "в целом поле лишние символы: '" + field + "'");
+        }
+        return value;
+    } catch (const std::runtime_error &) {
+        throw;
     } catch (const std::exception &) {
         fail(lineNumber, "ожидалось целое число, получено '" + field + "'");
     }
@@ -38,7 +47,14 @@ int toInt(const std::string &field, std::size_t lineNumber)
 double toDouble(const std::string &field, std::size_t lineNumber)
 {
     try {
-        return std::stod(field);
+        std::size_t used = 0;
+        const double value = std::stod(field, &used);
+        if (used != field.size()) {
+            fail(lineNumber, "в числе лишние символы: '" + field + "'");
+        }
+        return value;
+    } catch (const std::runtime_error &) {
+        throw;
     } catch (const std::exception &) {
         fail(lineNumber, "ожидалось число, получено '" + field + "'");
     }
@@ -48,13 +64,12 @@ double toDouble(const std::string &field, std::size_t lineNumber)
 
 std::vector<TargetData> loadTargets(const std::string &path)
 {
-    std::vector<TargetData> targets;
-
     std::ifstream in(path);
     if (!in) {
-        return targets;
+        throw std::runtime_error("не удалось открыть файл: " + path);
     }
 
+    std::vector<TargetData> targets;
     std::string line;
     std::size_t lineNumber = 0;
     bool headerSkipped = false;
@@ -90,5 +105,39 @@ std::vector<TargetData> loadTargets(const std::string &path)
         targets.push_back(target);
     }
 
+    return targets;
+}
+
+void saveTargets(const std::vector<TargetData> &targets, const std::string &path)
+{
+    std::ofstream out(path);
+    if (!out) {
+        throw std::runtime_error("не удалось открыть файл для записи: " + path);
+    }
+
+    out << kHeader << '\n';
+    for (const TargetData &target : targets) {
+        out << target.id << ','
+            << target.type << ','
+            << target.position.x << ','
+            << target.position.y << ','
+            << target.altitude << ','
+            << target.speedKmh << ','
+            << target.headingDeg << '\n';
+    }
+
+    if (!out) {
+        throw std::runtime_error("ошибка записи в файл: " + path);
+    }
+}
+
+std::vector<Target> toTargets(const std::vector<TargetData> &data)
+{
+    std::vector<Target> targets;
+    targets.reserve(data.size());
+    for (const TargetData &item : data) {
+        targets.push_back(Target(item.id, item.type, item.position,
+                                 item.speedKmh, item.headingDeg, item.altitude));
+    }
     return targets;
 }

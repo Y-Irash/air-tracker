@@ -18,3 +18,8 @@ CMakeLists.txt.user*
 .idea/
 Thumbs.db
 Desktop.ini
+
+# Файлы, которые создаются при запуске
+targets_out.csv
+tests_out.csv
+data/targets_out.csv
