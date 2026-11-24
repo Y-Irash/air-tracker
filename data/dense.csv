@@ -1,0 +1,12 @@
+id,type,x,y,altitude,speed,heading
+1,aircraft,0,0,5,600,90
+2,drone,3,4,0.4,120,180
+3,aircraft,20,0,6,700,0
+4,helicopter,20,8,1.8,260,270
+5,aircraft,60,0,9,800,45
+6,drone,60,20,0.3,150,135
+7,helicopter,-30,-30,2.2,300,225
+8,aircraft,100,0,10,850,0
+9,drone,109.9,0,0.5,140,90
+10,aircraft,200,0,11,900,180
+11,drone,210.1,0,0.4,130,270

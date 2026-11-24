@@ -13,6 +13,8 @@ add_compile_options(-Wall -Wextra)
 add_library(core STATIC
     core/point.cpp
     core/point.h
+    core/io.h
+    core/io.cpp
 )
 
 # include-каталог ядра «наружу»: любой, кто линкует core, получает -I.../core
